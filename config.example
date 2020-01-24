@@ -1,0 +1,17 @@
+# Example configuration
+
+# Define blue label color and default color for text (status2d patch needed)
+LC=^c#4c889f^
+TC=^d^
+
+# Change temperature module label to 'CPU' and use 'cpu0' as device
+LTEMP=CPU
+DTEMP=cpu0
+
+# Change time module format string
+FTIME="+%H:%M"
+
+# Enable only temperature and time modules
+mods() {
+	echo "$(mod_temp) $(mod_time)"
+}

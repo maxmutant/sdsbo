@@ -1,0 +1,109 @@
+#!/bin/sh
+
+# Simple dwm status bar for OpenBSD
+# Author:	Maximilian Mayer
+# License:	MIT (see LICENSE file)
+
+# defaults
+LC=					# label color
+TC=					# text color
+LBAT1=CHA			# charging label
+LBAT2=BAT			# battery label
+LDATE=DATE			# date label
+FDATE="+%Y-%m-%d"	# date format string
+IPIF=lo0			# IP address interface
+LIPV4=IPv4			# IPv4 label
+LIPV6=IPv6			# IPv6 label
+LTEMP=TEMP			# temperature label
+DTEMP=cpu0			# temperature device
+LTIME=TIME			# time label
+FTIME="+%T"			# time format string
+LVOL1=VOL			# volume 'muted' label
+LVOL2=VOL			# volume label
+
+# modules to use
+mods() {
+	echo "$(mod_temp) $(mod_ipv4) $(mod_ipv6) $(mod_vol) $(mod_bat) $(mod_date) $(mod_time)"
+}
+
+# battery module
+mod_bat () {
+	charging="$(apm -a)"
+	bat_stat="$(apm -l)"
+
+	if [ "$charging" = 1 ]; then
+		printf "%s%s%s %s%%" "$LC" "$LBAT1" "$TC" "$bat_stat"
+	else
+		printf "%s%s%s %s%%" "$LC" "$LBAT2" "$TC" "$bat_stat"
+	fi
+}
+
+# date module
+mod_date () {
+	printf "%s%s%s %s" "$LC" "$LDATE" "$TC" "$(date "$FDATE")"
+}
+
+# IPv4 address module
+mod_ipv4 () {
+	printf "%s%s%s %s" "$LC" "$LIPV4" "$TC" "$(ifconfig $IPIF \
+		| awk '/inet / { print $2; exit }')"
+}
+
+# IPv6 address module
+mod_ipv6 () {
+	printf "%s%s%s %s" "$LC" "$LIPV6" "$TC" "$(ifconfig $IPIF \
+		| awk '/inet6 / { print $2; exit }')"
+}
+
+# temperature module
+mod_temp () {
+	printf "%s%s%s %s" "$LC" "$LTEMP" "$TC" \
+		"$(sysctl -n hw.sensors."$DTEMP".temp0 | sed 's/ deg/°/g')"
+}
+
+# time module
+mod_time() {
+	printf "%s%s%s %s" "$LC" "$LTIME" "$TC" "$(date "$FTIME")"
+}
+
+# volume module
+mod_vol () {
+	mute="$(mixerctl -n outputs.master.mute)"
+
+	if [ "$mute" = "on" ]; then
+		printf "%s%s%s mute" "$LC" "$LVOL1" "$TC"
+	else
+		master="$(mixerctl -n outputs.master)"
+		vol_l=${master%,*}
+		vol_r=${master#*,}
+
+		# check whether volume on left and right channel differs
+		if [ "$vol_l" = "$vol_r" ]; then
+			printf "%s%s%s %s%%" "$LC" "$LVOL2" "$TC" "$(((vol_l*100) / 255))"
+		else
+			printf "%s%s%s L:%s%% R:%s%%" "$LC" "$LVOL2" "$TC" \
+				"$(((vol_l*100) / 255))" "$(((vol_r*100) / 255))"
+		fi
+	fi
+}
+
+# print usage
+usage() {
+	printf "usage: dwm_bar.sh [-c ~/path/to/config]\\n"
+}
+
+# handle input
+while getopts 'c:h' arg
+do
+	case "$arg" in
+		c) [ -f "$OPTARG" ] && . "$OPTARG" ;;
+		h|*) usage; exit 1 ;;
+	esac
+done
+
+# update status bar every second
+while true
+do
+	xsetroot -name "$(mods)"
+	sleep 1
+done
