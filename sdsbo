@@ -1,25 +1,25 @@
 #!/bin/sh
 
 # Simple dwm status bar for OpenBSD
-# Author:	Maximilian Mayer
-# License:	MIT (see LICENSE file)
+# Author:  Maximilian Mayer
+# License: MIT (see LICENSE file)
 
 # defaults
-LC=					# label color
-TC=					# text color
-LBAT1=CHA			# charging label
-LBAT2=BAT			# battery label
-LDATE=DATE			# date label
-FDATE="+%Y-%m-%d"	# date format string
-IPIF=lo0			# IP address interface
-LIPV4=IPv4			# IPv4 label
-LIPV6=IPv6			# IPv6 label
-LTEMP=TEMP			# temperature label
-DTEMP=cpu0			# temperature device
-LTIME=TIME			# time label
-FTIME="+%T"			# time format string
-LVOL1=VOL			# volume 'muted' label
-LVOL2=VOL			# volume label
+LC=                 # label color
+TC=                 # text color
+LBAT1=CHA           # charging label
+LBAT2=BAT           # battery label
+LDATE=DATE          # date label
+FDATE="+%Y-%m-%d"   # date format string
+IPIF=lo0            # IP address interface
+LIPV4=IPv4          # IPv4 label
+LIPV6=IPv6          # IPv6 label
+LTEMP=TEMP          # temperature label
+DTEMP=cpu0          # temperature device
+LTIME=TIME          # time label
+FTIME="+%T"         # time format string
+LVOL1=VOL           # volume 'muted' label
+LVOL2=VOL           # volume label
 
 # modules to use
 mods() {
@@ -51,8 +51,9 @@ mod_ipv4 () {
 
 # IPv6 address module
 mod_ipv6 () {
-	printf "%s%s%s %s" "$LC" "$LIPV6" "$TC" "$(ifconfig $IPIF \
-		| awk '/inet6 / { print $2; exit }')"
+	# gather IPv6 address and prune '%interface' suffix
+	inet6="$(ifconfig $IPIF | awk '/inet6 / { print $2; exit }')"
+	printf "%s%s%s %s" "$LC" "$LIPV6" "$TC" "${inet6%\%*}"
 }
 
 # temperature module
