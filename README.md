@@ -50,27 +50,27 @@ You have two options to customize your bar:
 ### Default Values
 ```
 # Colors
-LC=					# label color
-TC=					# text color
+LC=                             # label color
+TC=                             # text color
 
 # Labels
-LBAT1=CHA			# charging label
-LBAT2=BAT			# battery label
-LDATE=DATE			# date label
-LIPV4=IPv4			# IPv4 label
-LIPV6=IPv6			# IPv6 label
-LTEMP=TEMP			# temperature label
-LTIME=TIME			# time label
-LVOL1=VOL			# volume 'muted' label
-LVOL2=VOL			# volume label
+LBAT1=CHA                       # charging label
+LBAT2=BAT                       # battery label
+LDATE=DATE                      # date label
+LIPV4=IPv4                      # IPv4 label
+LIPV6=IPv6                      # IPv6 label
+LTEMP=TEMP                      # temperature label
+LTIME=TIME                      # time label
+LVOL1=VOL                       # volume 'muted' label
+LVOL2=VOL                       # volume label
 
 # Format strings
-FDATE="+%Y-%m-%d"	# date format string
-FTIME="+%T"			# time format string
+FDATE="+%Y-%m-%d"               # date format string
+FTIME="+%T"                     # time format string
 
 # Interfaces and devices
-IPIF=lo0			# IP address interface
-DTEMP=cpu0			# temperature device
+IPIF=lo0                        # IP address interface
+DTEMP=cpu0                      # temperature device
 ```
 
 ### Enable/Disable modules
