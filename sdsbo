@@ -90,7 +90,7 @@ mod_vol () {
 
 # print usage
 usage() {
-	printf "usage: dwm_bar.sh [-c ~/path/to/config]\\n"
+	printf "usage: sdsbo [-c ~/path/to/config]\\n"
 }
 
 # handle input
